@@ -222,12 +222,16 @@ end
 local function updateButton(id, group, config)
 	local button = group.buttons[id]
 	if( not button ) then
-		group.buttons[id] = CreateFrame("Button", nil, group)
+		group.buttons[id] = CreateFrame("Button", nil, group, "SecureUnitButtonTemplate")
 
 		button = group.buttons[id]
 		button:SetScript("OnEnter", showTooltip)
 		button:SetScript("OnLeave", hideTooltip)
-		button:RegisterForClicks("RightButtonUp")
+		button:RegisterForClicks("AnyUp")
+
+		button:SetAttribute("unit", group.parent.unit)
+		button:SetAttribute("*type1", "target")
+		button:SetAttribute("*type2", "togglemenu")
 
 		button.cooldown = CreateFrame("Cooldown", group.parent:GetName() .. "Aura" .. group.type .. id .. "Cooldown", button, "CooldownFrameTemplate")
 		button.cooldown:SetAllPoints(button)
@@ -276,7 +280,6 @@ local function updateButton(id, group, config)
 	button.border:SetWidth(config.size + 1)
 	button.stack:SetFont("Interface\\AddOns\\ShadowedUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", math.floor((config.size * 0.60) + 0.5), "OUTLINE")
 
-	button:SetScript("OnClick", cancelAura)
 	button.parent = group.parent
 	button:ClearAllPoints()
 	button:Hide()

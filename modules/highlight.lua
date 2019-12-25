@@ -1,5 +1,5 @@
 local Highlight = {}
-local goldColor, mouseColor = {r = 0.75, g = 0.75, b = 0.35}, {r = 0.75, g = 0.75, b = 0.50}
+local goldColor, mouseColor = {r = 0.75, g = 0.75, b = 0.35}, {r = 0.3, g = 0.3, b = 0.30}
 local rareColor, eliteColor = {r = 0, g = 0.63, b = 1}, {r = 1, g = 0.81, b = 0}
 
 local canCure = ShadowUF.Units.canCure
