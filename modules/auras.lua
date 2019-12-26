@@ -188,6 +188,16 @@ local function updateTooltip(self)
 	if( not GameTooltip:IsForbidden() and GameTooltip:IsOwned(self) ) then
 		GameTooltip:SetUnitAura(self.unit, self.auraID, self.filter)
 	end
+
+	if not self:IsMouseOver() then
+		self:SetScript("OnUpdate", nil)
+		self:EnableMouse(true)
+
+		if not GameTooltip:IsForbidden() then
+			GameTooltip:Hide()
+		end
+	end
+
 end
 
 local function showTooltip(self)
@@ -202,10 +212,15 @@ local function showTooltip(self)
 		GameTooltip:SetUnitAura(self.unit, self.auraID, self.filter)
 		self:SetScript("OnUpdate", updateTooltip)
 	end
+
+	self:EnableMouse(false)
+
 end
 
 local function hideTooltip(self)
 	self:SetScript("OnUpdate", nil)
+	self:EnableMouse(true)
+
 	if not GameTooltip:IsForbidden() then
 		GameTooltip:Hide()
 	end
@@ -222,16 +237,12 @@ end
 local function updateButton(id, group, config)
 	local button = group.buttons[id]
 	if( not button ) then
-		group.buttons[id] = CreateFrame("Button", nil, group, "SecureUnitButtonTemplate")
+		group.buttons[id] = CreateFrame("Button", nil, group)
 
 		button = group.buttons[id]
 		button:SetScript("OnEnter", showTooltip)
-		button:SetScript("OnLeave", hideTooltip)
-		button:RegisterForClicks("AnyUp")
-
-		button:SetAttribute("unit", group.parent.unit)
-		button:SetAttribute("*type1", "target")
-		button:SetAttribute("*type2", "togglemenu")
+		--button:SetScript("OnLeave", hideTooltip)
+		--button:RegisterForClicks("RightButtonUp")
 
 		button.cooldown = CreateFrame("Cooldown", group.parent:GetName() .. "Aura" .. group.type .. id .. "Cooldown", button, "CooldownFrameTemplate")
 		button.cooldown:SetAllPoints(button)
@@ -280,6 +291,7 @@ local function updateButton(id, group, config)
 	button.border:SetWidth(config.size + 1)
 	button.stack:SetFont("Interface\\AddOns\\ShadowedUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", math.floor((config.size * 0.60) + 0.5), "OUTLINE")
 
+	--button:SetScript("OnClick", cancelAura)
 	button.parent = group.parent
 	button:ClearAllPoints()
 	button:Hide()
