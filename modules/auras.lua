@@ -182,6 +182,14 @@ local function positionAllButtons(group, config)
 	end
 end
 
+local function hideTooltip(self)
+	if (not GameTooltip:IsForbidden() and GameTooltip:IsOwned(self)) then
+		GameTooltip:Hide()
+	end
+	self:SetScript("OnUpdate", nil)
+	self:EnableMouse(true)
+end
+
 -- Aura button functions
 -- Updates the X seconds left on aura tooltip while it's shown
 local function updateTooltip(self)
@@ -191,15 +199,17 @@ local function updateTooltip(self)
 	end
 
 	if not self:IsMouseOver() then
-		self:SetScript("OnUpdate", nil)
-		self:EnableMouse(true)
+		hideTooltip(self)
+		--self:SetScript("OnUpdate", nil)
+		---self:EnableMouse(true)
 
-		if (not GameTooltip:IsForbidden() and GameTooltip:IsOwned(self)) then
-			GameTooltip:Hide()
-		end
+		--if (not GameTooltip:IsForbidden() and GameTooltip:IsOwned(self)) then
+		--	GameTooltip:Hide()
+		--end
 	end
-
 end
+
+
 
 local function showTooltip(self)
 	if( not ShadowUF.db.profile.locked ) then return end
@@ -214,17 +224,9 @@ local function showTooltip(self)
 		self:SetScript("OnUpdate", updateTooltip)
 		self:EnableMouse(false)
 	end
-
-
 end
 
-local function hideTooltip(self)
-	if (not GameTooltip:IsForbidden() and GameTooltip:IsOwned(self)) then
-		GameTooltip:Hide()
-	end
-	self:SetScript("OnUpdate", nil)
-	self:EnableMouse(true)
-end
+
 
 local function cancelAura(self, mouse)
 	if( mouse ~= "RightButton" or not UnitIsUnit(self.parent.unit, "player") or InCombatLockdown() or self.filter == "TEMP" ) then
