@@ -1,5 +1,5 @@
 local Highlight = {}
-local goldColor, mouseColor = {r = 0.75, g = 0.75, b = 0.35}, {r = 0.3, g = 0.3, b = 0.30}
+local goldColor, mouseColor = {r = 1, g = 1, b = 1}, {r = 0.7, g = 0.7, b = 0.7}
 local rareColor, eliteColor = {r = 0, g = 0.63, b = 1}, {r = 1, g = 0.81, b = 0}
 
 local canCure = ShadowUF.Units.canCure
@@ -24,6 +24,9 @@ local function OnLeave(frame)
 	frame.highlight.OnLeave(frame)
 end
 
+local texture1 = "Interface\\Addons\\Grid2\\media\\white16x16";
+local texture2 = "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\highlight"
+
 function Highlight:OnEnable(frame)
 	if( not frame.highlight ) then
 		frame.highlight = CreateFrame("Frame", nil, frame)
@@ -33,7 +36,7 @@ function Highlight:OnEnable(frame)
 
 		frame.highlight.top = frame.highlight:CreateTexture(nil, "OVERLAY")
 		frame.highlight.top:SetBlendMode("ADD")
-		frame.highlight.top:SetTexture("Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\highlight")
+		frame.highlight.top:SetTexture(texture1)
 		frame.highlight.top:SetPoint("TOPLEFT", frame, ShadowUF.db.profile.backdrop.inset, -ShadowUF.db.profile.backdrop.inset)
 		frame.highlight.top:SetPoint("TOPRIGHT", frame, -ShadowUF.db.profile.backdrop.inset, ShadowUF.db.profile.backdrop.inset)
 		frame.highlight.top:SetHeight(30)
@@ -42,7 +45,7 @@ function Highlight:OnEnable(frame)
 
 		frame.highlight.left = frame.highlight:CreateTexture(nil, "OVERLAY")
 		frame.highlight.left:SetBlendMode("ADD")
-		frame.highlight.left:SetTexture("Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\highlight")
+		frame.highlight.left:SetTexture(texture1)
 		frame.highlight.left:SetPoint("TOPLEFT", frame, ShadowUF.db.profile.backdrop.inset, -ShadowUF.db.profile.backdrop.inset)
 		frame.highlight.left:SetPoint("BOTTOMLEFT", frame, -ShadowUF.db.profile.backdrop.inset, ShadowUF.db.profile.backdrop.inset)
 		frame.highlight.left:SetWidth(30)
@@ -51,7 +54,7 @@ function Highlight:OnEnable(frame)
 
 		frame.highlight.right = frame.highlight:CreateTexture(nil, "OVERLAY")
 		frame.highlight.right:SetBlendMode("ADD")
-		frame.highlight.right:SetTexture("Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\highlight")
+		frame.highlight.right:SetTexture(texture1)
 		frame.highlight.right:SetPoint("TOPRIGHT", frame, -ShadowUF.db.profile.backdrop.inset, -ShadowUF.db.profile.backdrop.inset)
 		frame.highlight.right:SetPoint("BOTTOMRIGHT", frame, 0, ShadowUF.db.profile.backdrop.inset)
 		frame.highlight.right:SetWidth(30)
@@ -60,7 +63,7 @@ function Highlight:OnEnable(frame)
 
 		frame.highlight.bottom = frame.highlight:CreateTexture(nil, "OVERLAY")
 		frame.highlight.bottom:SetBlendMode("ADD")
-		frame.highlight.bottom:SetTexture("Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\highlight")
+		frame.highlight.bottom:SetTexture(texture1)
 		frame.highlight.bottom:SetPoint("BOTTOMLEFT", frame, ShadowUF.db.profile.backdrop.inset, ShadowUF.db.profile.backdrop.inset)
 		frame.highlight.bottom:SetPoint("BOTTOMRIGHT", frame, -ShadowUF.db.profile.backdrop.inset, ShadowUF.db.profile.backdrop.inset)
 		frame.highlight.bottom:SetHeight(30)
@@ -126,16 +129,23 @@ end
 
 function Highlight:Update(frame)
 	local color
+	local texture = texture1
+	local size = ShadowUF.db.profile.units[frame.unitType].highlight.size;
 	if( frame.highlight.hasDebuff ) then
 		color = DebuffTypeColor[frame.highlight.hasDebuff] or DebuffTypeColor[""]
 	elseif( frame.highlight.hasAttention ) then
 		color = goldColor
+		size = 8
+		texture = texture2
 	elseif( frame.highlight.hasMouseover ) then
+		size = 1
 		color = mouseColor
 	elseif( ShadowUF.db.profile.units[frame.unitType].highlight.rareMob and ( frame.highlight.hasClassification == "rareelite" or frame.highlight.hasClassification == "rare" ) ) then
 		color = rareColor
+		texture = texture2
 	elseif( ShadowUF.db.profile.units[frame.unitType].highlight.eliteMob and frame.highlight.hasClassification == "elite" ) then
 		color = eliteColor
+		texture = texture2
 	end
 
 	if( color ) then
@@ -143,6 +153,15 @@ function Highlight:Update(frame)
 		frame.highlight.left:SetVertexColor(color.r, color.g, color.b, ShadowUF.db.profile.units[frame.unitType].highlight.alpha)
 		frame.highlight.bottom:SetVertexColor(color.r, color.g, color.b, ShadowUF.db.profile.units[frame.unitType].highlight.alpha)
 		frame.highlight.right:SetVertexColor(color.r, color.g, color.b, ShadowUF.db.profile.units[frame.unitType].highlight.alpha)
+		frame.highlight.top:SetTexture(texture)
+		frame.highlight.left:SetTexture(texture)
+		frame.highlight.bottom:SetTexture(texture)
+		frame.highlight.right:SetTexture(texture)
+		frame.highlight.top:SetHeight(size)
+		frame.highlight.bottom:SetHeight(size)
+		frame.highlight.left:SetWidth(size)
+		frame.highlight.right:SetWidth(size)
+
 		frame.highlight:Show()
 	else
 		frame.highlight:Hide()
